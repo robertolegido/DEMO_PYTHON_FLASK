@@ -1,0 +1,66 @@
+#PRECONDICION Docker corriendo como servicio y cuenta 
+systemcl status docker
+
+#0 - Tener un fichero de Dockerfile con la receta  
+R@M2PYTHON_FLASK_DOCKER% cat Dockerfile
+# start by pulling the python image
+FROM python:3.8.5-alpine
+# copy the requirements file into the image
+COPY ./requirements.txt /app/requirements.txt
+# switch working directory
+WORKDIR /app
+# install dependencies and packages defined in requirements
+RUN pip install -r requirements.txt
+# copy every content from local file to the image
+COPY . /app
+# run python in container and execute rest.py scritp
+ENTRYPOINT ["python"]
+CMD ["rest.py"]
+
+#1 - Crear una imagen en local
+docker image build -t flask_guagua_miaumiau .
+(-t incluye una tag)
+
+#2 - Asociar una tag a la imagen (si no estaba hecho)  
+docker login
+ docker tag 4b267adafe6e robertolegidosilva/flask_guagua_miaumiau:animalesv1
+
+#3 - Subir la imagen
+R@M2.docker% docker push robertolegidosilva/flask_guagua_miaumiau:animalesv1
+The push refers to repository [docker.io/robertolegidosilva/flask_guagua_miaumiau]
+f6765cef08d9: Pushed
+37c3c6d621cc: Pushed
+5f70bf18a086: Pushed
+d74eb0430751: Pushed
+0c5b2785074b: Pushed
+27da86305d5e: Pushed
+798cb960efb8: Pushed
+8691b6bf9361: Pushed
+e2f13739ad41: Pushed
+animalesv1: digest: sha256:d030ee4cb151861b78ba4cf2277a2cea270f5309f331b01a850b836df46ff8f5 size: 2200
+
+#4 - Descargar imagen de docker 
+cats@cats:~/Documents/TGS$ docker pull robertolegidosilva/flask_guagua_miaumiau:animalesv2
+animalesv2: Pulling from robertolegidosilva/flask_guagua_miaumiau
+b538f80385f9: Pull complete
+0d489d24c263: Pull complete
+f4da3152e180: Pull complete
+be87d3f602c9: Pull complete
+08cc941d381a: Pull complete
+aad1c3204c70: Pull complete
+4f4fb700ef54: Pull complete
+d81618e972b3: Pull complete
+679634ebd842: Pull complete
+Digest: sha256:b16cd2daa45d5fa6d6405c554e5f2226f3243f2a6ea9539dcbe54e56257aacf6
+Status: Downloaded newer image for robertolegidosilva/flask_guagua_miaumiau:animalesv2
+docker.io/robertolegidosilva/flask_guagua_miaumiau:animalesv2
+
+
+
+# Resumen docs docker
+When you build them, using docker build -t <hub-user>/<repo-name>[:<tag>]
+By re-tagging an existing local image docker tag <existing-image> <hub-user>/<repo-name>[:<tag>]
+By using docker commit <existing-container> <hub-user>/<repo-name>[:<tag>] to commit changes
+Now you can push this repository to the registry designated by its name or tag.
+
+docker push <hub-user>/<repo-name>:<tag>  
