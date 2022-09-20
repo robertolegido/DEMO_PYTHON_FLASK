@@ -21,6 +21,11 @@ CMD ["rest.py"]
 docker image build -t flask_guagua_miaumiau .
 (-t incluye una tag)
 
+#1.1 - Ejecutar una imagen en local 
+docker run -p 5000:5000 -d flask_guagua_miaumiau
+# consulta local
+curl -v localhost:5000/perrito
+
 #2 - Asociar una tag a la imagen (si no estaba hecho)  
 docker login
  docker tag 4b267adafe6e robertolegidosilva/flask_guagua_miaumiau:animalesv1

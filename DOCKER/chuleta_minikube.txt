@@ -1,0 +1,77 @@
+# 0 Descarga e instalacion 
+$ curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+$ sudo install minikube-linux-amd64 /usr/local/bin/minikube
+
+# 1 Arranque 
+$ minikube start
+$ minikube kubectl -- get pods -A
+
+# 1.1 Opcional incluirun alias para eviatar minikube kubectl --
+ 
+
+# 2 Hacer accesible el registro local de imagenes docer 
+
+# 3 Construir imagen en terminal accesible 
+
+
+# 4 Configurar el deployment 
+$MINIKUBECTL create deployment animalitospod --image=animalitos
+deployment.apps/animalitospod created
+
+# 4.1 Comprobar que se ha creado
+$ MINIKUBECTL get deployment 
+NAME            READY   UP-TO-DATE   AVAILABLE   AGE
+animalitospod   0/1     1            0           12s
+
+animalitospod# 4.2 Editar la politica de descarga 
+$ kubectl edit deployment animalitospod
+deployment.apps/animalitospod edited
+
+    spec:
+      containers:
+      - image: animalitos
+        imagePullPolicy: Never
+
+# 5 Comprobar estado del pod 
+$ MINIKUBECTL get pod -n default
+NAME                             READY   STATUS    RESTARTS   AGE
+animalitospod-5b84656594-xwhkj   1/1     Running   0          8m49s
+
+# 6 Exponer servicio 
+$ MINIKUBECTL expose deployment animalitospod --type=NodePort --port=5000
+service/animalitospod exposed
+$ minikube service animalitospod --url
+http://192.168.49.2:32248
+
+# 6.1 Comprobar servicios 
+$ MINIKUBECTL get svc
+NAME            TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+animalitospod   NodePort    10.96.186.249   <none>        5000:32248/TCP   49s
+kubernetes      ClusterIP   10.96.0.1       <none>        443/TCP          49m
+
+# 6.2 Crear un tunel al servicio 
+$ minikube service animalitospod --url
+http://192.168.49.2:32248
+
+# 7 Acceder 
+$ curl -v http://192.168.49.2:32248/perrito
+*   Trying 192.168.49.2:32248...
+* Connected to 192.168.49.2 (192.168.49.2) port 32248 (#0)
+> GET /perrito HTTP/1.1
+> Host: 192.168.49.2:32248
+> User-Agent: curl/7.81.0
+> Accept: */*
+> 
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+< Server: Werkzeug/2.2.2 Python/3.8.5
+< Date: Mon, 19 Sep 2022 10:17:54 GMT
+< Content-Type: application/json
+< Content-Length: 30
+< Connection: close
+< 
+{
+  "perrito": "guau guau!"
+}
+
+
